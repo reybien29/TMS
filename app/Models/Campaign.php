@@ -14,6 +14,7 @@ class Campaign extends Model
 
     protected $fillable = [
         'newsletter_id',
+        'title',
         'subject',
         'content',
         'scheduled_at',

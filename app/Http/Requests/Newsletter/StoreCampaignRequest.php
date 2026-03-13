@@ -24,6 +24,7 @@ class StoreCampaignRequest extends FormRequest
     {
         return [
             'newsletter_id' => 'required|exists:newsletters,id',
+            'title' => 'nullable|string|max:255',
             'subject' => 'nullable|string|max:255',
             'content' => 'nullable|string',
             'scheduled_at' => 'nullable|date',

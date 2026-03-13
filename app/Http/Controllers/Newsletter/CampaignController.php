@@ -53,6 +53,7 @@ class CampaignController extends Controller
     {
         $campaign = Campaign::create([
             'newsletter_id' => $request->newsletter_id,
+            'title' => $request->title,
             'subject' => $request->subject,
             'content' => $request->content,
             'scheduled_at' => $request->scheduled_at,

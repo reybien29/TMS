@@ -2,6 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import React from 'react';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import PrimaryButton from '@/Components/PrimaryButton';
+import SecondaryButton from '@/Components/SecondaryButton';
 
 export default function Index({ campaigns, newsletters = [] }) {
     const { delete: destroy } = useForm();
@@ -60,19 +61,49 @@ export default function Index({ campaigns, newsletters = [] }) {
                         <div className="p-6 text-gray-900 dark:text-gray-100">
                             {campaigns.data.length === 0 ? (
                                 <div className="text-center py-12">
-                            <p className="text-gray-500 dark:text-gray-400 mb-4">You haven't created any campaigns yet.</p>
-                            {newsletters.length > 0 ? (
-                                <PrimaryButton
-                                    onClick={() => router.visit(route('newsletter.campaigns.create', { newsletter_id: selectedNewsletterId }))}
-                                    className="text-indigo-600 hover:text-indigo-500 font-medium"
-                                >
-                                    Create your first one &rarr;
-                                </PrimaryButton>
-                            ) : (
-                                <Link href={route('newsletter.create')} className="text-indigo-600 hover:text-indigo-500 font-medium">
-                                    Create a newsletter first &rarr;
-                                </Link>
-                            )}
+                                    <div className="mx-auto w-16 h-16 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center mb-4">
+                                        <svg className="w-8 h-8 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6l4 2" />
+                                        </svg>
+                                    </div>
+                                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Campaigns Yet</h3>
+                                    <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                                        Create your first campaign to start sending newsletters to your subscribers.
+                                    </p>
+                                    {newsletters.length > 0 ? (
+                                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                                            <PrimaryButton
+                                                onClick={() => router.visit(route('newsletter.campaigns.create', { newsletter_id: selectedNewsletterId }))}
+                                                className="px-6 py-3"
+                                            >
+                                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                                </svg>
+                                                Create Your First Campaign
+                                            </PrimaryButton>
+                                            <SecondaryButton
+                                                onClick={() => router.visit(route('newsletter.index'))}
+                                                className="px-6 py-3"
+                                            >
+                                                View Newsletters
+                                            </SecondaryButton>
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                                            <PrimaryButton
+                                                href={route('newsletter.create')}
+                                                className="px-6 py-3"
+                                            >
+                                                Create Newsletter First
+                                            </PrimaryButton>
+                                            <SecondaryButton
+                                                onClick={() => router.visit(route('newsletter.index'))}
+                                                className="px-6 py-3"
+                                            >
+                                                View Existing Newsletters
+                                            </SecondaryButton>
+                                        </div>
+                                    )}
                                 </div>
                             ) : (
                                 <div className="overflow-x-auto">
@@ -94,12 +125,13 @@ export default function Index({ campaigns, newsletters = [] }) {
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                                            campaign.status === 'sent' ? 'bg-green-100 text-green-800' :
-                                                            campaign.status === 'draft' ? 'bg-gray-100 text-gray-800' :
-                                                            campaign.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
+                                                            campaign.status === 'completed' ? 'bg-green-100 text-green-800' :
+                                                            campaign.status === 'pending' ? 'bg-gray-100 text-gray-800' :
+                                                            campaign.status === 'sending' ? 'bg-blue-100 text-blue-800' :
+                                                            campaign.status === 'failed' ? 'bg-red-100 text-red-800' :
                                                             'bg-yellow-100 text-yellow-800'
                                                         }`}>
-                                                            {campaign.status}
+                                                            {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
                                                         </span>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-gray-300">
