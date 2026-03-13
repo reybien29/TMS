@@ -25,6 +25,22 @@ class User extends Authenticatable
     ];
 
     /**
+     * Get the newsletters created by the user.
+     */
+    public function newsletters()
+    {
+        return $this->hasMany(Newsletter::class);
+    }
+
+    /**
+     * Get the subscribers managed by the user.
+     */
+    public function subscribers()
+    {
+        return $this->hasMany(Subscriber::class);
+    }
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>

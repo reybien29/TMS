@@ -6,30 +6,16 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
 import { useForm } from '@inertiajs/react';
 import { useRef, useState } from 'react';
+import { SectionHeader } from './UpdateProfileInformationForm';
 
 export default function DeleteUserForm({ className = '' }) {
-    const [confirmingUserDeletion, setConfirmingUserDeletion] = useState(false);
+    const [confirming, setConfirming] = useState(false);
     const passwordInput = useRef();
 
-    const {
-        data,
-        setData,
-        delete: destroy,
-        processing,
-        reset,
-        errors,
-        clearErrors,
-    } = useForm({
-        password: '',
-    });
-
-    const confirmUserDeletion = () => {
-        setConfirmingUserDeletion(true);
-    };
+    const { data, setData, delete: destroy, processing, reset, errors, clearErrors } = useForm({ password: '' });
 
     const deleteUser = (e) => {
         e.preventDefault();
-
         destroy(route('profile.destroy'), {
             preserveScroll: true,
             onSuccess: () => closeModal(),
@@ -39,81 +25,69 @@ export default function DeleteUserForm({ className = '' }) {
     };
 
     const closeModal = () => {
-        setConfirmingUserDeletion(false);
-
+        setConfirming(false);
         clearErrors();
         reset();
     };
 
     return (
-        <section className={`space-y-6 ${className}`}>
-            <header>
-                <h2 className="text-lg font-medium text-gray-900">
-                    Delete Account
-                </h2>
+        <section className={className}>
+            <SectionHeader
+                title="Delete account"
+                description="Permanently delete your account and all associated data. This action cannot be undone."
+            />
 
-                <p className="mt-1 text-sm text-gray-600">
-                    Once your account is deleted, all of its resources and data
-                    will be permanently deleted. Before deleting your account,
-                    please download any data or information that you wish to
-                    retain.
-                </p>
-            </header>
+            <div style={{ marginTop: '1.5rem' }}>
+                <DangerButton onClick={() => setConfirming(true)}>
+                    Delete account
+                </DangerButton>
+            </div>
 
-            <DangerButton onClick={confirmUserDeletion}>
-                Delete Account
-            </DangerButton>
+            <Modal show={confirming} onClose={closeModal} maxWidth="md">
+                <div style={{ padding: '2rem' }}>
+                    {/* Warning icon */}
+                    <div style={{
+                        width: '3rem', height: '3rem',
+                        background: 'rgba(232,52,26,0.1)',
+                        borderRadius: '50%',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        marginBottom: '1.25rem',
+                    }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red)" strokeWidth="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                    </div>
 
-            <Modal show={confirmingUserDeletion} onClose={closeModal}>
-                <form onSubmit={deleteUser} className="p-6">
-                    <h2 className="text-lg font-medium text-gray-900">
-                        Are you sure you want to delete your account?
+                    <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.35rem', color: 'var(--ink)', letterSpacing: '-0.01em', margin: '0 0 0.5rem' }}>
+                        Delete your account?
                     </h2>
-
-                    <p className="mt-1 text-sm text-gray-600">
-                        Once your account is deleted, all of its resources and
-                        data will be permanently deleted. Please enter your
-                        password to confirm you would like to permanently delete
-                        your account.
+                    <p style={{ fontSize: '0.875rem', color: 'var(--ink-3)', lineHeight: 1.6, margin: '0 0 1.5rem' }}>
+                        This will permanently delete all your data. Enter your password to confirm.
                     </p>
 
-                    <div className="mt-6">
-                        <InputLabel
-                            htmlFor="password"
-                            value="Password"
-                            className="sr-only"
-                        />
-
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        <InputLabel htmlFor="delete-password" value="Your password" />
                         <TextInput
-                            id="password"
+                            id="delete-password"
                             type="password"
                             name="password"
                             ref={passwordInput}
                             value={data.password}
-                            onChange={(e) =>
-                                setData('password', e.target.value)
-                            }
-                            className="mt-1 block w-3/4"
                             isFocused
-                            placeholder="Password"
+                            placeholder="Enter your password"
+                            onChange={e => setData('password', e.target.value)}
                         />
-
-                        <InputError
-                            message={errors.password}
-                            className="mt-2"
-                        />
+                        <InputError message={errors.password} />
                     </div>
 
-                    <div className="mt-6 flex justify-end">
-                        <SecondaryButton onClick={closeModal}>
-                            Cancel
-                        </SecondaryButton>
-
-                        <DangerButton className="ms-3" disabled={processing}>
-                            Delete Account
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+                        <SecondaryButton onClick={closeModal}>Cancel</SecondaryButton>
+                        <DangerButton onClick={deleteUser} disabled={processing}>
+                            {processing ? 'Deleting…' : 'Delete account'}
                         </DangerButton>
                     </div>
-                </form>
+                </div>
             </Modal>
         </section>
     );

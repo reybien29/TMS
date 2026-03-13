@@ -7,170 +7,199 @@ import { useState } from 'react';
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
-
-    const [showingNavigationDropdown, setShowingNavigationDropdown] =
-        useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="border-b border-gray-100 bg-white">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-16 justify-between">
-                        <div className="flex">
-                            <div className="flex shrink-0 items-center">
-                                <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
-                                </Link>
-                            </div>
+        <div style={{ minHeight: '100vh', background: 'var(--surface)', fontFamily: 'var(--font-sans)' }}>
 
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard')}
-                                >
+            {/* ── Top Nav ── */}
+            <nav style={{
+                background: 'var(--white)',
+                borderBottom: '1px solid var(--rule)',
+                position: 'sticky',
+                top: 0,
+                zIndex: 30,
+            }}>
+                <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
+                    <div style={{ display: 'flex', height: '3.75rem', alignItems: 'center', justifyContent: 'space-between' }}>
+
+                        {/* Left: logo + nav links */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }}>
+                            <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', textDecoration: 'none', flexShrink: 0 }}>
+                                <ApplicationLogo style={{ height: '1.75rem', width: 'auto', color: 'var(--red)', fill: 'currentColor' }} />
+                                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.15rem', color: 'var(--ink)', letterSpacing: '-0.01em' }}>
+                                    Laravel
+                                </span>
+                            </Link>
+
+                            {/* Desktop nav links */}
+<div style={{ display: 'none', alignItems: 'center', gap: '1.75rem' }} className="sm-flex">
+                                <NavLink href={route('dashboard')} active={route().current('dashboard')}>
                                     Dashboard
+                                </NavLink>
+                                <NavLink href={route('newsletter.index')} active={route().current('newsletter.index')}>
+                                    Newsletters
+                                </NavLink>
+                                <NavLink href={route('newsletter.subscribers.index')} active={route().current('newsletter.subscribers.index')}>
+                                    Subscribers
+                                </NavLink>
+                                <NavLink href={route('newsletter.campaigns.index')} active={route().current('newsletter.campaigns.index')}>
+                                    Campaigns
+                                </NavLink>
+                                <NavLink href={route('newsletter.metrics.index')} active={route().current('newsletter.metrics.index')}>
+                                    Analytics
                                 </NavLink>
                             </div>
                         </div>
 
-                        <div className="hidden sm:ms-6 sm:flex sm:items-center">
-                            <div className="relative ms-3">
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
-                                            >
-                                                {user.name}
-
-                                                <svg
-                                                    className="-me-0.5 ms-2 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
+                        {/* Right: user dropdown */}
+                        <div style={{ display: 'none', alignItems: 'center' }} className="sm-flex">
+                            <Dropdown>
+                                <Dropdown.Trigger>
+                                    <button
+                                        type="button"
+                                        style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem',
+                                            fontFamily: 'var(--font-sans)',
+                                            fontSize: '0.875rem',
+                                            fontWeight: 500,
+                                            color: 'var(--ink-2)',
+                                            background: 'transparent',
+                                            border: '1.5px solid var(--rule-strong)',
+                                            borderRadius: 'var(--radius-sm)',
+                                            padding: '0.4rem 0.75rem',
+                                            cursor: 'pointer',
+                                            transition: 'background var(--transition), border-color var(--transition)',
+                                        }}
+                                        onMouseEnter={e => {
+                                            e.currentTarget.style.background = 'var(--surface-2)';
+                                            e.currentTarget.style.borderColor = 'var(--ink-4)';
+                                        }}
+                                        onMouseLeave={e => {
+                                            e.currentTarget.style.background = 'transparent';
+                                            e.currentTarget.style.borderColor = 'var(--rule-strong)';
+                                        }}
+                                    >
+                                        {/* User avatar initial */}
+                                        <span style={{
+                                            width: '1.5rem', height: '1.5rem',
+                                            borderRadius: '50%',
+                                            background: 'var(--red-subtle)',
+                                            color: 'var(--red)',
+                                            fontSize: '0.7rem',
+                                            fontWeight: 700,
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            letterSpacing: 0,
+                                            flexShrink: 0,
+                                        }}>
+                                            {user.name.charAt(0).toUpperCase()}
                                         </span>
-                                    </Dropdown.Trigger>
-
-                                    <Dropdown.Content>
-                                        <Dropdown.Link
-                                            href={route('profile.edit')}
-                                        >
-                                            Profile
-                                        </Dropdown.Link>
-                                        <Dropdown.Link
-                                            href={route('logout')}
-                                            method="post"
-                                            as="button"
-                                        >
-                                            Log Out
-                                        </Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
-                            </div>
+                                        {user.name}
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ opacity: 0.5 }}>
+                                            <polyline points="6 9 12 15 18 9"/>
+                                        </svg>
+                                    </button>
+                                </Dropdown.Trigger>
+                                <Dropdown.Content>
+                                    <div style={{ padding: '0.5rem 0.75rem 0.375rem', borderBottom: '1px solid var(--rule)', marginBottom: '0.25rem' }}>
+                                        <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--ink)', marginBottom: '0.1rem' }}>{user.name}</div>
+                                        <div style={{ fontSize: '0.72rem', color: 'var(--ink-4)' }}>{user.email}</div>
+                                    </div>
+                                    <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
+                                    <Dropdown.Link href={route('logout')} method="post" as="button"
+                                        style={{ color: 'var(--red)', fontWeight: 500 }}
+                                    >
+                                        Sign out
+                                    </Dropdown.Link>
+                                </Dropdown.Content>
+                            </Dropdown>
                         </div>
 
-                        <div className="-me-2 flex items-center sm:hidden">
-                            <button
-                                onClick={() =>
-                                    setShowingNavigationDropdown(
-                                        (previousState) => !previousState,
-                                    )
-                                }
-                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
-                            >
-                                <svg
-                                    className="h-6 w-6"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        className={
-                                            !showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        className={
-                                            showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div
-                    className={
-                        (showingNavigationDropdown ? 'block' : 'hidden') +
-                        ' sm:hidden'
-                    }
-                >
-                    <div className="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard')}
+                        {/* Mobile menu toggle */}
+                        <button
+                            onClick={() => setMobileOpen(v => !v)}
+                            className="sm-hidden"
+                            style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: '2.25rem', height: '2.25rem',
+                                background: 'transparent',
+                                border: '1.5px solid var(--rule-strong)',
+                                borderRadius: 'var(--radius-sm)',
+                                cursor: 'pointer',
+                                color: 'var(--ink-3)',
+                            }}
                         >
-                            Dashboard
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <div className="border-t border-gray-200 pb-1 pt-4">
-                        <div className="px-4">
-                            <div className="text-base font-medium text-gray-800">
-                                {user.name}
-                            </div>
-                            <div className="text-sm font-medium text-gray-500">
-                                {user.email}
-                            </div>
-                        </div>
-
-                        <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>
-                                Profile
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                method="post"
-                                href={route('logout')}
-                                as="button"
-                            >
-                                Log Out
-                            </ResponsiveNavLink>
-                        </div>
+                            {mobileOpen ? (
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            ) : (
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+                                </svg>
+                            )}
+                        </button>
                     </div>
                 </div>
+
+                {/* Mobile menu */}
+                {mobileOpen && (
+                    <div style={{ borderTop: '1px solid var(--rule)', background: 'var(--white)' }}>
+<div style={{ padding: '0.5rem 0' }}>
+                            <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
+                                Dashboard
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink href={route('newsletter.index')} active={route().current('newsletter.index')}>
+                                Newsletters
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink href={route('newsletter.subscribers.index')} active={route().current('newsletter.subscribers.index')}>
+                                Subscribers
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink href={route('newsletter.campaigns.index')} active={route().current('newsletter.campaigns.index')}>
+                                Campaigns
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink href={route('newsletter.metrics.index')} active={route().current('newsletter.metrics.index')}>
+                                Analytics
+                            </ResponsiveNavLink>
+                        </div>
+                        <div style={{ borderTop: '1px solid var(--rule)', padding: '0.75rem 1rem 1rem' }}>
+                            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--ink)', marginBottom: '0.125rem' }}>{user.name}</div>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--ink-4)', marginBottom: '0.75rem' }}>{user.email}</div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                                <ResponsiveNavLink href={route('profile.edit')}>Profile</ResponsiveNavLink>
+                                <ResponsiveNavLink href={route('logout')} method="post" as="button">Sign out</ResponsiveNavLink>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </nav>
 
+            {/* ── Page header ── */}
             {header && (
-                <header className="bg-white shadow">
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <div style={{
+                    background: 'var(--white)',
+                    borderBottom: '1px solid var(--rule)',
+                }}>
+                    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '1.25rem 1.5rem' }}>
                         {header}
                     </div>
-                </header>
+                </div>
             )}
 
             <main>{children}</main>
+
+            <style>{`
+                @media (min-width: 640px) {
+                    .sm-flex   { display: flex !important; }
+                    .sm-hidden { display: none !important; }
+                }
+            `}</style>
         </div>
     );
 }

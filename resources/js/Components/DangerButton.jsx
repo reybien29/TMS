@@ -1,18 +1,43 @@
-export default function DangerButton({
-    className = '',
-    disabled,
-    children,
-    ...props
-}) {
+export default function DangerButton({ className = '', disabled, children, ...props }) {
     return (
         <button
             {...props}
-            className={
-                `inline-flex items-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 active:bg-red-700 ${
-                    disabled && 'opacity-25'
-                } ` + className
-            }
+            style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.375rem',
+                fontFamily: 'var(--font-sans)',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+                background: 'var(--red)',
+                color: '#fff',
+                border: '1.5px solid var(--red)',
+                borderRadius: 'var(--radius-sm)',
+                padding: '0.5625rem 1.125rem',
+                cursor: disabled ? 'not-allowed' : 'pointer',
+                opacity: disabled ? 0.45 : 1,
+                transition: 'background var(--transition), border-color var(--transition), box-shadow var(--transition), transform var(--transition)',
+                whiteSpace: 'nowrap',
+            }}
+            onMouseEnter={e => {
+                if (!disabled) {
+                    e.currentTarget.style.background = 'var(--red-hover)';
+                    e.currentTarget.style.borderColor = 'var(--red-hover)';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(232,52,26,0.15)';
+                }
+            }}
+            onMouseLeave={e => {
+                e.currentTarget.style.background = 'var(--red)';
+                e.currentTarget.style.borderColor = 'var(--red)';
+                e.currentTarget.style.boxShadow = 'none';
+            }}
+            onMouseDown={e => { if (!disabled) e.currentTarget.style.transform = 'translateY(1px)'; }}
+            onMouseUp={e => { e.currentTarget.style.transform = 'translateY(0)'; }}
             disabled={disabled}
+            className={className}
         >
             {children}
         </button>
