@@ -37,18 +37,6 @@ export default function AuthenticatedLayout({ header, children }) {
                                 <NavLink href={route('dashboard')} active={route().current('dashboard')}>
                                     Dashboard
                                 </NavLink>
-                                <NavLink href={route('newsletter.index')} active={route().current('newsletter.index')}>
-                                    Newsletters
-                                </NavLink>
-                                <NavLink href={route('newsletter.subscribers.index')} active={route().current('newsletter.subscribers.index')}>
-                                    Subscribers
-                                </NavLink>
-                                <NavLink href={route('newsletter.campaigns.index')} active={route().current('newsletter.campaigns.index')}>
-                                    Campaigns
-                                </NavLink>
-                                <NavLink href={route('newsletter.metrics.index')} active={route().current('newsletter.metrics.index')}>
-                                    Analytics
-                                </NavLink>
                             </div>
                         </div>
 
@@ -154,18 +142,6 @@ export default function AuthenticatedLayout({ header, children }) {
 <div style={{ padding: '0.5rem 0' }}>
                             <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
                                 Dashboard
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink href={route('newsletter.index')} active={route().current('newsletter.index')}>
-                                Newsletters
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink href={route('newsletter.subscribers.index')} active={route().current('newsletter.subscribers.index')}>
-                                Subscribers
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink href={route('newsletter.campaigns.index')} active={route().current('newsletter.campaigns.index')}>
-                                Campaigns
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink href={route('newsletter.metrics.index')} active={route().current('newsletter.metrics.index')}>
-                                Analytics
                             </ResponsiveNavLink>
                         </div>
                         <div style={{ borderTop: '1px solid var(--rule)', padding: '0.75rem 1rem 1rem' }}>

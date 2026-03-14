@@ -2,12 +2,8 @@
 
 namespace App\Providers;
 
-use App\Models\Campaign;
-use App\Models\Newsletter;
-use App\Models\Subscriber;
-use App\Policies\CampaignPolicy;
-use App\Policies\NewsletterPolicy;
-use App\Policies\SubscriberPolicy;
+use App\Models\Event;
+use App\Policies\EventPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Vite;
 
@@ -19,9 +15,7 @@ class AppServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        Newsletter::class => NewsletterPolicy::class,
-        Subscriber::class => SubscriberPolicy::class,
-        Campaign::class => CampaignPolicy::class,
+        Event::class => EventPolicy::class,
     ];
 
     /**
