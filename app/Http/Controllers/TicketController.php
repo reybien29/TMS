@@ -2,63 +2,95 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Registration;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $tickets = Ticket::where('user_id', Auth::id())->latest()->paginate(10);
+
+        return inertia('Tickets/Index', [
+            'tickets' => $tickets,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $registrations = Registration::where('user_id', Auth::id())->get();
+
+        return inertia('Tickets/Create', [
+            'registrations' => $registrations,
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'registration_id' => 'required|exists:registrations,id',
+            'ticket_number' => 'required|string|unique:tickets',
+            'status' => 'required|in:active,used,expired',
+            'qr_code' => 'nullable|string',
+        ]);
+
+        $validated['user_id'] = Auth::id();
+
+        Ticket::create($validated);
+
+        return redirect()->route('tickets.index')
+            ->with('success', 'Ticket created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Ticket $ticket)
     {
-        //
+        $this->authorize('view', $ticket);
+
+        $ticket->load(['registration.event']);
+
+        return inertia('Tickets/Show', [
+            'ticket' => $ticket,
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(Ticket $ticket)
     {
-        //
+        $this->authorize('update', $ticket);
+
+        $registrations = Registration::where('user_id', Auth::id())->get();
+
+        return inertia('Tickets/Edit', [
+            'ticket' => $ticket,
+            'registrations' => $registrations,
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Ticket $ticket)
     {
-        //
+        $this->authorize('update', $ticket);
+
+        $validated = $request->validate([
+            'registration_id' => 'required|exists:registrations,id',
+            'ticket_number' => 'required|string|unique:tickets,ticket_number,'.$ticket->id,
+            'status' => 'required|in:active,used,expired',
+            'qr_code' => 'nullable|string',
+        ]);
+
+        $ticket->update($validated);
+
+        return redirect()->route('tickets.index')
+            ->with('success', 'Ticket updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Ticket $ticket)
     {
-        //
+        $this->authorize('delete', $ticket);
+
+        $ticket->delete();
+
+        return redirect()->route('tickets.index')
+            ->with('success', 'Ticket deleted successfully.');
     }
 }

@@ -13,6 +13,10 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    const ROLE_ADMIN = 'admin';
+
+    const ROLE_USER = 'user';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -22,23 +26,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
-
-    /**
-     * Get the newsletters created by the user.
-     */
-    public function newsletters()
-    {
-        return $this->hasMany(Newsletter::class);
-    }
-
-    /**
-     * Get the subscribers managed by the user.
-     */
-    public function subscribers()
-    {
-        return $this->hasMany(Subscriber::class);
-    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -61,5 +50,62 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // ── Role helpers ──────────────────────────────────────────────────────────
+
+    public function isAdmin(): bool
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function isUser(): bool
+    {
+        return $this->role === self::ROLE_USER;
+    }
+
+    /**
+     * Satisfy the hasRole() calls already present in EventPolicy.
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
+    }
+
+    // ── Relationships ─────────────────────────────────────────────────────────
+
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
+
+    public function venues()
+    {
+        return $this->hasMany(Venue::class);
+    }
+
+    public function teams()
+    {
+        return $this->hasMany(Team::class);
+    }
+
+    public function players()
+    {
+        return $this->hasMany(Player::class);
+    }
+
+    public function registrations()
+    {
+        return $this->hasMany(Registration::class);
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
+
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
     }
 }

@@ -25,6 +25,8 @@ class HandleInertiaRequests extends Middleware
 
     /**
      * Define the props that are shared by default.
+     * The authenticated user's role is shared so React components
+     * can conditionally render admin-only UI elements.
      *
      * @return array<string, mixed>
      */
@@ -33,11 +35,21 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user() ? [
+                    'id' => $request->user()->id,
+                    'name' => $request->user()->name,
+                    'email' => $request->user()->email,
+                    'role' => $request->user()->role,
+                    'isAdmin' => $request->user()->isAdmin(),
+                ] : null,
             ],
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
+            ],
+            'flash' => [
+                'success' => $request->session()->get('success'),
+                'error' => $request->session()->get('error'),
             ],
         ];
     }

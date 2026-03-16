@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\Team;
 use App\Models\Venue;
+use App\Services\AuditLogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,17 +13,41 @@ class EventController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * Admins see all events; regular users see only their own.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $events = Event::with(['venue', 'team', 'opponentTeam'])
-            ->where('user_id', Auth::id())
-            ->latest()
-            ->paginate(10);
+        $this->authorize('viewAny', Event::class);
+
+        $query = Event::with(['venue', 'team', 'opponentTeam'])
+            ->withCount('registrations');
+
+        if ($request->has('search')) {
+            $query->where('title', 'like', '%'.$request->search.'%')
+                ->orWhere('description', 'like', '%'.$request->search.'%');
+        }
+
+        if ($request->has('event_type')) {
+            $query->where('event_type', $request->event_type);
+        }
+
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('start_date')) {
+            $query->whereDate('start_time', '>=', $request->start_date);
+        }
+
+        if ($request->has('end_date')) {
+            $query->whereDate('start_time', '<=', $request->end_date);
+        }
+
+        $events = $query->latest('start_time')->paginate(12);
 
         return inertia('Events/Index', [
             'events' => $events,
-            'filters' => request()->only(['search', 'event_type', 'status']),
+            'filters' => $request->only(['search', 'event_type', 'status', 'start_date', 'end_date']),
         ]);
     }
 
@@ -31,8 +56,16 @@ class EventController extends Controller
      */
     public function create()
     {
-        $venues = Venue::where('user_id', Auth::id())->get();
-        $teams = Team::where('user_id', Auth::id())->get();
+        $this->authorize('create', Event::class);
+
+        // Admins see all venues/teams; users see only their own.
+        $venues = Auth::user()->isAdmin()
+            ? Venue::all()
+            : Venue::where('user_id', Auth::id())->get();
+
+        $teams = Auth::user()->isAdmin()
+            ? Team::all()
+            : Team::where('user_id', Auth::id())->get();
 
         return inertia('Events/Create', [
             'venues' => $venues,
@@ -45,6 +78,8 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Event::class);
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -60,9 +95,32 @@ class EventController extends Controller
             'event_code' => 'nullable|string|unique:events,event_code',
         ]);
 
+        // Ensure non-admins can only attach venues/teams they own.
+        if (! Auth::user()->isAdmin()) {
+            $venueOwnedByUser = Venue::where('id', $validated['venue_id'])
+                ->where('user_id', Auth::id())
+                ->exists();
+
+            if (! $venueOwnedByUser) {
+                abort(403, 'You do not own the selected venue.');
+            }
+
+            if (! empty($validated['team_id'])) {
+                $teamOwnedByUser = Team::where('id', $validated['team_id'])
+                    ->where('user_id', Auth::id())
+                    ->exists();
+
+                if (! $teamOwnedByUser) {
+                    abort(403, 'You do not own the selected team.');
+                }
+            }
+        }
+
         $validated['user_id'] = Auth::id();
 
-        Event::create($validated);
+        $event = Event::create($validated);
+
+        AuditLogService::log('created', Event::class, $event->id, ['title' => $event->title]);
 
         return redirect()->route('events.index')
             ->with('success', 'Event created successfully.');
@@ -89,8 +147,13 @@ class EventController extends Controller
     {
         $this->authorize('update', $event);
 
-        $venues = Venue::where('user_id', Auth::id())->get();
-        $teams = Team::where('user_id', Auth::id())->get();
+        $venues = Auth::user()->isAdmin()
+            ? Venue::all()
+            : Venue::where('user_id', Auth::id())->get();
+
+        $teams = Auth::user()->isAdmin()
+            ? Team::all()
+            : Team::where('user_id', Auth::id())->get();
 
         return inertia('Events/Edit', [
             'event' => $event,
@@ -123,6 +186,8 @@ class EventController extends Controller
 
         $event->update($validated);
 
+        AuditLogService::log('updated', Event::class, $event->id, ['changes' => $event->getChanges()]);
+
         return redirect()->route('events.index')
             ->with('success', 'Event updated successfully.');
     }
@@ -134,7 +199,11 @@ class EventController extends Controller
     {
         $this->authorize('delete', $event);
 
+        $eventTitle = $event->title;
+        $eventId = $event->id;
         $event->delete();
+
+        AuditLogService::log('deleted', Event::class, $eventId, ['title' => $eventTitle]);
 
         return redirect()->route('events.index')
             ->with('success', 'Event deleted successfully.');

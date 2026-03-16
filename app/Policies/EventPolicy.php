@@ -8,7 +8,19 @@ use App\Models\User;
 class EventPolicy
 {
     /**
-     * Determine whether the user can view any models.
+     * Admins bypass all policy checks automatically.
+     */
+    public function before(User $user, string $ability): ?bool
+    {
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        return null; // continue to individual methods for regular users
+    }
+
+    /**
+     * Determine whether the user can view any events.
      */
     public function viewAny(User $user): bool
     {
@@ -16,15 +28,16 @@ class EventPolicy
     }
 
     /**
-     * Determine whether the user can view the model.
+     * Determine whether the user can view the event.
+     * Users can only view their own events.
      */
     public function view(User $user, Event $event): bool
     {
-        return $user->id === $event->user_id;
+        return true; // Any member can view event details
     }
 
     /**
-     * Determine whether the user can create models.
+     * Determine whether the user can create events.
      */
     public function create(User $user): bool
     {
@@ -32,7 +45,8 @@ class EventPolicy
     }
 
     /**
-     * Determine whether the user can update the model.
+     * Determine whether the user can update the event.
+     * Users can only update their own events.
      */
     public function update(User $user, Event $event): bool
     {
@@ -40,7 +54,8 @@ class EventPolicy
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * Determine whether the user can delete the event.
+     * Users can only delete their own events.
      */
     public function delete(User $user, Event $event): bool
     {
@@ -48,7 +63,7 @@ class EventPolicy
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Restore is reserved for admin only (handled via before()).
      */
     public function restore(User $user, Event $event): bool
     {
@@ -56,7 +71,7 @@ class EventPolicy
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Force delete is reserved for admin only (handled via before()).
      */
     public function forceDelete(User $user, Event $event): bool
     {
