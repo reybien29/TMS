@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\Notification;
 
 class AdminNewsController extends Controller
 {
+    public function create()
+    {
+        return inertia('News/Create');
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

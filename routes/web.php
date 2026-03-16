@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\Admin\AdminNewsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DueController;
 use App\Http\Controllers\EventController;
@@ -142,6 +143,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // News routes
     Route::get('/news', [NewsController::class, 'index'])->name('news.index');
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/news/create', [AdminNewsController::class, 'create'])->name('news.create');
+        Route::post('/news', [AdminNewsController::class, 'store'])->name('news.store');
+    });
 
     // Notifications
     Route::get('/api/notifications', [NotificationController::class, 'index'])->name('notifications.index');

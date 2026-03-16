@@ -21,6 +21,7 @@ class Registration extends Model
         'transaction_id',
         'payment_date',
         'notes',
+        'team_id',
         'user_id',
     ];
 
