@@ -1,6 +1,8 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link } from '@inertiajs/react';
 
+const safe = (str) => str?.toLowerCase() ?? '';
+
 export default function Index({ auth, teams, filters }) {
     return (
         <DashboardLayout>
@@ -15,7 +17,7 @@ export default function Index({ auth, teams, filters }) {
                             Manage clubs, teams, and divisions in your league.
                         </p>
                     </div>
-                    {auth.user.isAdmin && (
+                    {auth?.user?.isAdmin && (
                         <Link 
                             href={route('teams.create')} 
                             className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 transition-all duration-300 hover:scale-105 active:scale-95"
@@ -30,47 +32,47 @@ export default function Index({ auth, teams, filters }) {
 
                 {/* Teams List */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {teams.data.length > 0 ? (
-                        teams.data.map((team) => (
+                    {(teams?.data ?? []).length > 0 ? (
+                        (teams?.data ?? []).map((team) => (
                             <div key={team.id} className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden flex flex-col group transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1">
                                 <div className="p-8 pb-4 flex flex-col items-center text-center">
                                     <div className="w-20 h-20 rounded-full bg-slate-50 border-2 border-slate-100 p-1 mb-4 flex-shrink-0 relative overflow-hidden group-hover:border-blue-200 transition-colors">
-                                        {team.logo ? (
+                                        {team?.logo ? (
                                             <img src={team.logo} alt={team.name} className="w-full h-full object-contain rounded-full" />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center text-slate-300 font-black text-2xl uppercase">
-                                                {team.abbreviation || team.name.charAt(0)}
+                                                {team?.abbreviation || (team?.name ?? '').charAt(0)}
                                             </div>
                                         )}
                                     </div>
                                     <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                                        {team.name.toLowerCase()}
+                                        {safe(team?.name)}
                                     </h3>
                                     <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mt-1">
-                                        {team.team_type || 'basketball club'}
+                                        {team?.team_type || 'basketball club'}
                                     </p>
                                 </div>
 
                                 <div className="px-8 py-6 grid grid-cols-2 gap-4 border-b border-slate-50">
                                     <div>
                                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none mb-1">Coach</p>
-                                        <p className="text-sm font-bold text-slate-600 truncate">{team.coach_name?.toLowerCase() || 'unassigned'}</p>
+                                        <p className="text-sm font-bold text-slate-600 truncate">{safe(team?.coach_name) || 'unassigned'}</p>
                                     </div>
                                     <div>
                                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none mb-1">Players</p>
-                                        <p className="text-sm font-bold text-slate-600">{team.players_count || '0'} registered</p>
+                                        <p className="text-sm font-bold text-slate-600">{team?.players_count ?? 0} registered</p>
                                     </div>
                                 </div>
 
                                 <div className="px-8 py-4 bg-slate-50/20 flex flex-wrap gap-2">
-                                    {team.age_group && (
+                                    {team?.age_group && (
                                         <span className="px-2 py-1 bg-white border border-slate-100 text-[10px] font-bold text-slate-400 rounded-lg uppercase tracking-wider">
                                             {team.age_group}
                                         </span>
                                     )}
-                                    {team.division && (
+                                    {team?.division && (
                                         <span className="px-2 py-1 bg-white border border-slate-100 text-[10px] font-bold text-slate-400 rounded-lg uppercase tracking-wider">
-                                            {team.division.toLowerCase()}
+                                            {safe(team.division)}
                                         </span>
                                     )}
                                 </div>
@@ -82,7 +84,7 @@ export default function Index({ auth, teams, filters }) {
                                     >
                                         Roster
                                     </Link>
-                                    {auth.user.isAdmin && (
+                                    {auth?.user?.isAdmin && (
                                         <Link 
                                             href={route('teams.edit', team.id)}
                                             className="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-slate-400 hover:text-indigo-600 hover:border-indigo-200 rounded-xl transition-all"
@@ -105,9 +107,9 @@ export default function Index({ auth, teams, filters }) {
                 </div>
 
                 {/* Pagination */}
-                {teams.links && teams.links.length > 3 && (
+                {(teams?.links ?? []).length > 3 && (
                     <div className="mt-10 py-6 flex items-center justify-center gap-1">
-                        {teams.links.map((link, index) => (
+                        {(teams?.links ?? []).map((link, index) => (
                             <Link 
                                 key={index} 
                                 href={link.url}

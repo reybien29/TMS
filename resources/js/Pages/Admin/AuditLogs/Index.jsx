@@ -1,6 +1,8 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head } from '@inertiajs/react';
 
+const safe = (str) => str?.toLowerCase() ?? '';
+
 export default function Index({ auth, activities }) {
     const getActionColor = (action) => {
         switch (action) {
@@ -39,17 +41,17 @@ export default function Index({ auth, activities }) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50 bg-white">
-                                {activities.data.length > 0 ? (
+                                {activities?.data && activities.data.length > 0 ? (
                                     activities.data.map((log) => (
                                         <tr key={log.id} className="hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-8 py-5">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400 border border-slate-200 uppercase">
-                                                        {log.user?.name.charAt(0)}
+                                                        {(log.user?.name ?? '').charAt(0)}
                                                     </div>
                                                     <div>
-                                                        <div className="text-sm font-bold text-gray-900 capitalize">{log.user?.name.toLowerCase()}</div>
-                                                        <div className="text-[10px] font-black text-slate-300 uppercase italic leading-none">{log.user?.role}</div>
+                                                        <div className="text-sm font-bold text-gray-900 capitalize">{safe(log.user?.name)}</div>
+                                                        <div className="text-[10px] font-black text-slate-300 uppercase italic leading-none">{safe(log.user?.role)}</div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -105,7 +107,7 @@ export default function Index({ auth, activities }) {
                     </div>
 
                     {/* Pagination */}
-                    {activities.links && activities.links.length > 3 && (
+                    {activities?.links && activities.links.length > 3 && (
                         <div className="px-8 py-6 border-t border-slate-50 flex items-center justify-center gap-1">
                             {activities.links.map((link, index) => (
                                 <button 

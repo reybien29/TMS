@@ -1,6 +1,8 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link } from '@inertiajs/react';
 
+const safe = (str) => str?.toLowerCase() ?? '';
+
 export default function Index({ auth, dues, filters }) {
     return (
         <DashboardLayout>
@@ -31,17 +33,17 @@ export default function Index({ auth, dues, filters }) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50 bg-white">
-                                {dues.data.length > 0 ? (
+                                {dues?.data && dues.data.length > 0 ? (
                                     dues.data.map((due) => (
                                         <tr key={due.id} className="hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-8 py-5">
                                                 <div className="flex items-center gap-4">
                                                     <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0 text-slate-400 font-bold border border-slate-200 uppercase">
-                                                        {due.user?.name.charAt(0)}
+                                                        {(due.user?.name ?? '').charAt(0)}
                                                     </div>
                                                     <div>
-                                                        <div className="text-sm font-bold text-gray-900 capitalize">{due.user?.name.toLowerCase()}</div>
-                                                        <div className="text-xs font-medium text-slate-400 lowercase">{due.user?.email.toLowerCase()}</div>
+                                                        <div className="text-sm font-bold text-gray-900 capitalize">{safe(due.user?.name)}</div>
+                                                        <div className="text-xs font-medium text-slate-400 lowercase">{safe(due.user?.email)}</div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -92,7 +94,7 @@ export default function Index({ auth, dues, filters }) {
                     </div>
 
                     {/* Pagination */}
-                    {dues.links && dues.links.length > 3 && (
+                    {dues?.links && dues.links.length > 3 && (
                         <div className="px-8 py-6 border-t border-slate-50 flex items-center justify-between">
                             <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                                 Total Records: {dues.total}

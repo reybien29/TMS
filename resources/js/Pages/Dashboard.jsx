@@ -1,6 +1,8 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link } from '@inertiajs/react';
 
+const safe = (str) => str?.toLowerCase() ?? '';
+
 const StatCard = ({ title, value, subtitle, icon, colorClass, isLight = false }) => (
     <div className={`${isLight ? 'bg-white' : colorClass} rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col justify-between h-44 group transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1`}>
         <div className="flex justify-between items-start">
@@ -22,12 +24,12 @@ const StatCard = ({ title, value, subtitle, icon, colorClass, isLight = false })
     </div>
 );
 
-export default function Dashboard({ 
-    my_registrations_count, 
-    my_dues_balance, 
-    upcoming_events, 
-    my_recent_registrations, 
-    latest_news 
+export default function Dashboard({
+    my_registrations_count,
+    my_dues_balance,
+    upcoming_events,
+    my_recent_registrations,
+    latest_news
 }) {
     return (
         <DashboardLayout>
@@ -44,16 +46,16 @@ export default function Dashboard({
 
                 {/* Quick Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                    <StatCard 
-                        title="YOUR EVENTS" 
+                    <StatCard
+                        title="YOUR EVENTS"
                         value={my_registrations_count || 0}
                         subtitle="Total registrations"
                         colorClass="bg-blue-600"
                         icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>}
                     />
-                    <StatCard 
-                        title="DUES BALANCE" 
-                        value={`$${Number(my_dues_balance || 0).toLocaleString()}`} 
+                    <StatCard
+                        title="DUES BALANCE"
+                        value={`$${Number(my_dues_balance || 0).toLocaleString()}`}
                         subtitle="Outstanding contributions"
                         colorClass="bg-[#7c3aed]" // Indigo 600
                         icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>}
@@ -69,7 +71,7 @@ export default function Dashboard({
                         </div>
                         <div>
                             <div className="text-xl font-black text-gray-900 mb-1 truncate">
-                                {upcoming_events && upcoming_events[0] ? upcoming_events[0].title.toLowerCase() : 'none scheduled'}
+                                {upcoming_events && upcoming_events[0] ? safe(upcoming_events[0].title) : 'none scheduled'}
                             </div>
                             <div className="text-[10px] font-black uppercase tracking-widest text-blue-600">
                                 {upcoming_events && upcoming_events[0] ? new Date(upcoming_events[0].start_time).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'check back soon'}
@@ -96,11 +98,11 @@ export default function Dashboard({
                                                     🏀
                                                 </div>
                                                 <div>
-                                                    <h4 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors capitalize">{event.title.toLowerCase()}</h4>
-                                                    <p className="text-xs text-slate-400 font-medium">at {event.venue?.name.toLowerCase()}</p>
+                                                    <h4 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors capitalize">{safe(event.title)}</h4>
+                                                    <p className="text-xs text-slate-400 font-medium">at {safe(event.venue?.name)}</p>
                                                 </div>
                                             </div>
-                                            <Link 
+                                            <Link
                                                 href={route('registrations.create', { event_id: event.id })}
                                                 className="px-4 py-1.5 bg-blue-600 text-white font-black text-[10px] uppercase tracking-widest rounded-lg hover:bg-blue-500 transition-colors"
                                             >
@@ -129,7 +131,7 @@ export default function Dashboard({
                                     {my_recent_registrations.map((reg) => (
                                         <div key={reg.id} className="p-6 hover:bg-slate-50/50 transition-colors flex items-center justify-between group">
                                             <div>
-                                                <h4 className="font-bold text-gray-900 group-hover:text-emerald-500 transition-colors capitalize">{reg.event?.title.toLowerCase()}</h4>
+                                                <h4 className="font-bold text-gray-900 group-hover:text-emerald-500 transition-colors capitalize">{safe(reg.event?.title)}</h4>
                                                 <p className="text-xs text-slate-400 font-medium">Status: <span className="text-emerald-500 uppercase tracking-widest font-black text-[8px]">{reg.payment_status}</span></p>
                                             </div>
                                             <div className="text-right">
@@ -150,3 +152,4 @@ export default function Dashboard({
         </DashboardLayout>
     );
 }
+

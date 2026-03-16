@@ -1,6 +1,8 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link } from '@inertiajs/react';
 
+const safe = (str) => str?.toLowerCase() ?? '';
+
 export default function Index({ auth, venues, filters }) {
     return (
         <DashboardLayout>
@@ -15,7 +17,7 @@ export default function Index({ auth, venues, filters }) {
                             Manage locations, courts, and facilities for your events.
                         </p>
                     </div>
-                    {auth.user.isAdmin && (
+                    {auth?.user?.isAdmin && (
                         <Link 
                             href={route('venues.create')} 
                             className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 transition-all duration-300 hover:scale-105 active:scale-95"
@@ -30,14 +32,14 @@ export default function Index({ auth, venues, filters }) {
 
                 {/* Main Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {venues.data.length > 0 ? (
-                        venues.data.map((venue) => (
+                    {(venues?.data ?? []).length > 0 ? (
+                        (venues?.data ?? []).map((venue) => (
                             <div key={venue.id} className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden flex flex-col group transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1">
                                 <div className="aspect-video bg-slate-100 relative overflow-hidden">
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                                     <div className="absolute bottom-4 left-4">
                                         <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-[10px] font-black uppercase tracking-wider text-blue-600 rounded-full">
-                                            {venue.city.toLowerCase()}, {venue.country.toLowerCase()}
+                                            {safe(venue.city)}, {safe(venue.country)}
                                         </span>
                                     </div>
                                     <div className="w-full h-full flex items-center justify-center text-slate-300">
@@ -46,27 +48,27 @@ export default function Index({ auth, venues, filters }) {
                                 </div>
                                 <div className="p-6">
                                     <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
-                                        {venue.name.toLowerCase()}
+                                        {safe(venue.name)}
                                     </h3>
                                     <p className="text-xs font-medium text-slate-400 mb-6 truncate">
-                                        {venue.address.toLowerCase()}
+                                        {safe(venue.address)}
                                     </p>
 
                                     <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
                                         <div>
                                             <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none mb-1">Capacity</p>
-                                            <p className="font-bold text-slate-600 tracking-tight">{venue.capacity || 'N/A'}</p>
+                                            <p className="font-bold text-slate-600 tracking-tight">{venue?.capacity ? venue.capacity.toLocaleString() : 'N/A'}</p>
                                         </div>
                                         <div>
                                             <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none mb-1">Rate</p>
-                                            <p className="font-bold text-slate-600 tracking-tight">${venue.hourly_rate}/hr</p>
+                                            <p className="font-bold text-slate-600 tracking-tight">${venue.hourly_rate ?? 0}/hr</p>
                                         </div>
                                     </div>
 
                                     <div className="flex flex-wrap gap-2 mb-6">
                                         {venue.facilities && venue.facilities.split(',').slice(0, 3).map((f, i) => (
                                             <span key={i} className="px-2 py-0.5 bg-slate-50 text-[10px] font-bold text-slate-400 rounded-md uppercase tracking-tight italic">
-                                                {f.trim().toLowerCase()}
+                                                {safe(f.trim())}
                                             </span>
                                         ))}
                                     </div>
@@ -77,9 +79,9 @@ export default function Index({ auth, venues, filters }) {
                                         href={route('venues.show', venue.id)}
                                         className="flex-1 text-center py-2.5 bg-white border border-slate-200 text-slate-600 font-bold text-xs rounded-xl hover:bg-slate-50 transition-colors uppercase tracking-widest"
                                     >
-                                        {auth.user.isAdmin ? 'Manage' : 'Details'}
+                                        {auth?.user?.isAdmin ? 'Manage' : 'Details'}
                                     </Link>
-                                    {auth.user.isAdmin && (
+                                    {auth?.user?.isAdmin && (
                                         <Link 
                                             href={route('venues.edit', venue.id)}
                                             className="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 text-slate-400 hover:text-indigo-600 hover:border-indigo-200 rounded-xl transition-all"
@@ -102,9 +104,9 @@ export default function Index({ auth, venues, filters }) {
                 </div>
 
                 {/* Pagination */}
-                {venues.links && venues.links.length > 3 && (
+                {(venues?.links ?? []).length > 3 && (
                     <div className="mt-10 py-6 flex items-center justify-center gap-1">
-                        {venues.links.map((link, index) => (
+                        {(venues?.links ?? []).map((link, index) => (
                             <Link 
                                 key={index} 
                                 href={link.url}

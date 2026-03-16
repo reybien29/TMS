@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 export default function AuthenticatedLayout({ header, children }) {
     const { auth, flash } = usePage().props;
-    const user = auth.user;
+    const user = auth?.user || {};
     const [mobileOpen, setMobileOpen] = useState(false);
 
     return (
@@ -70,15 +70,15 @@ export default function AuthenticatedLayout({ header, children }) {
                                 textTransform: 'uppercase',
                                 padding: '0.25rem 0.6rem',
                                 borderRadius: '9999px',
-                                background: user.isAdmin
+                                background: user?.isAdmin
                                     ? 'rgba(232,52,26,0.1)'
                                     : 'rgba(24,18,14,0.06)',
-                                color: user.isAdmin ? 'var(--red)' : 'var(--ink-3)',
-                                border: user.isAdmin
+                                color: user?.isAdmin ? 'var(--red)' : 'var(--ink-3)',
+                                border: user?.isAdmin
                                     ? '1px solid rgba(232,52,26,0.2)'
                                     : '1px solid var(--rule)',
                             }}>
-                                {user.isAdmin ? (
+                                {user?.isAdmin ? (
                                     <>
                                         <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor">
                                             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -119,7 +119,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                         <span style={{
                                             width: '1.5rem', height: '1.5rem',
                                             borderRadius: '50%',
-                                            background: user.isAdmin ? 'rgba(232,52,26,0.12)' : 'var(--red-subtle)',
+                                            background: user?.isAdmin ? 'rgba(232,52,26,0.12)' : 'var(--red-subtle)',
                                             color: 'var(--red)',
                                             fontSize: '0.7rem',
                                             fontWeight: 700,
@@ -128,9 +128,9 @@ export default function AuthenticatedLayout({ header, children }) {
                                             justifyContent: 'center',
                                             flexShrink: 0,
                                         }}>
-                                            {user.name.charAt(0).toUpperCase()}
+                                            {(user?.name || '?').charAt(0).toUpperCase()}
                                         </span>
-                                        {user.name}
+                                        {user?.name || 'User'}
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ opacity: 0.5 }}>
                                             <polyline points="6 9 12 15 18 9"/>
                                         </svg>
@@ -138,8 +138,8 @@ export default function AuthenticatedLayout({ header, children }) {
                                 </Dropdown.Trigger>
                                 <Dropdown.Content>
                                     <div style={{ padding: '0.5rem 0.75rem 0.375rem', borderBottom: '1px solid var(--rule)', marginBottom: '0.25rem' }}>
-                                        <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--ink)', marginBottom: '0.1rem' }}>{user.name}</div>
-                                        <div style={{ fontSize: '0.72rem', color: 'var(--ink-4)' }}>{user.email}</div>
+                                        <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--ink)', marginBottom: '0.1rem' }}>{user?.name || 'Anonymous'}</div>
+                                        <div style={{ fontSize: '0.72rem', color: 'var(--ink-4)' }}>{user?.email || 'no-email'}</div>
                                     </div>
                                     <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
                                     <Dropdown.Link href={route('logout')} method="post" as="button" style={{ color: 'var(--red)', fontWeight: 500 }}>
@@ -189,18 +189,18 @@ export default function AuthenticatedLayout({ header, children }) {
                         </div>
                         <div style={{ borderTop: '1px solid var(--rule)', padding: '0.75rem 1rem 1rem' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                                <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--ink)' }}>{user.name}</div>
+                                <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--ink)' }}>{user?.name || 'User'}</div>
                                 <span style={{
                                     fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.08em',
                                     textTransform: 'uppercase', padding: '0.15rem 0.45rem',
                                     borderRadius: '9999px',
-                                    background: user.isAdmin ? 'rgba(232,52,26,0.1)' : 'rgba(24,18,14,0.06)',
-                                    color: user.isAdmin ? 'var(--red)' : 'var(--ink-4)',
+                                    background: user?.isAdmin ? 'rgba(232,52,26,0.1)' : 'rgba(24,18,14,0.06)',
+                                    color: user?.isAdmin ? 'var(--red)' : 'var(--ink-4)',
                                 }}>
-                                    {user.isAdmin ? 'Admin' : 'User'}
+                                    {user?.isAdmin ? 'Admin' : 'User'}
                                 </span>
                             </div>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--ink-4)', marginBottom: '0.75rem' }}>{user.email}</div>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--ink-4)', marginBottom: '0.75rem' }}>{user?.email || 'no-email'}</div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                                 <ResponsiveNavLink href={route('profile.edit')}>Profile</ResponsiveNavLink>
                                 <ResponsiveNavLink href={route('logout')} method="post" as="button">Sign out</ResponsiveNavLink>

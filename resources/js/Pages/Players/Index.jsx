@@ -1,6 +1,8 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link } from '@inertiajs/react';
 
+const safe = (str) => str?.toLowerCase() ?? '';
+
 export default function Index({ auth, players, filters }) {
     return (
         <DashboardLayout>
@@ -40,32 +42,32 @@ export default function Index({ auth, players, filters }) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50 bg-white">
-                                {players.data.length > 0 ? (
-                                    players.data.map((player) => (
+                                {(players?.data ?? []).length > 0 ? (
+                                    (players?.data ?? []).map((player) => (
                                         <tr key={player.id} className="hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-8 py-5">
                                                 <div className="flex items-center gap-4">
                                                     <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0 text-slate-400 font-bold border border-slate-200">
-                                                        {player.first_name.charAt(0)}
+                                                        {(player?.first_name ?? '').charAt(0)}
                                                     </div>
                                                     <div>
-                                                        <div className="text-sm font-bold text-gray-900 capitalize">{player.first_name.toLowerCase()} {player.last_name.toLowerCase()}</div>
-                                                        <div className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic">{player.email || 'no email'}</div>
+                                                        <div className="text-sm font-bold text-gray-900 capitalize">{safe(player?.first_name)} {safe(player?.last_name)}</div>
+                                                        <div className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic">{player?.email || 'no email'}</div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="px-8 py-5">
                                                 <span className="inline-flex items-center px-2 py-1 bg-slate-50 text-slate-600 text-[10px] font-black uppercase tracking-widest rounded-lg border border-slate-100">
-                                                    {player.position || 'n/a'}
+                                                    {player?.position || 'n/a'}
                                                 </span>
                                             </td>
                                             <td className="px-8 py-5">
                                                 <div className="text-xs font-bold text-slate-600 capitalize">
-                                                    {player.team?.name.toLowerCase() || 'unassigned'}
+                                                    {safe(player?.team?.name) || 'unassigned'}
                                                 </div>
                                             </td>
                                             <td className="px-8 py-5 text-sm font-black text-slate-700">
-                                                #{player.jersey_number || '--'}
+                                                #{player?.jersey_number || '--'}
                                             </td>
                                             <td className="px-8 py-5 text-right whitespace-nowrap">
                                                 <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -96,9 +98,9 @@ export default function Index({ auth, players, filters }) {
                     </div>
 
                     {/* Pagination */}
-                    {players.links && players.links.length > 3 && (
+                    {(players?.links ?? []).length > 3 && (
                         <div className="px-8 py-6 border-t border-slate-50 flex items-center justify-center gap-1">
-                            {players.links.map((link, index) => (
+                            {(players?.links ?? []).map((link, index) => (
                                 <Link 
                                     key={index} 
                                     href={link.url}

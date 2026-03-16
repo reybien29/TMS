@@ -1,6 +1,8 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
+const safe = (str) => str?.toLowerCase() ?? '';
+
 export default function Index({ auth, users, filters }) {
     const { delete: destroy } = useForm();
 
@@ -69,17 +71,17 @@ export default function Index({ auth, users, filters }) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50 bg-white">
-                                {users.data.length > 0 ? (
+                                {users?.data && users.data.length > 0 ? (
                                     users.data.map((user) => (
                                         <tr key={user.id} className="hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-8 py-5">
                                                 <div className="flex items-center gap-4">
                                                     <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0 text-slate-400 font-bold border border-slate-200">
-                                                        {user.name.charAt(0).toUpperCase()}
+                                                        {(user.name ?? '').charAt(0).toUpperCase()}
                                                     </div>
                                                     <div>
-                                                        <div className="text-sm font-bold text-gray-900">{user.name.toLowerCase()}</div>
-                                                        <div className="text-xs font-medium text-slate-400">{user.email.toLowerCase()}</div>
+                                                        <div className="text-sm font-bold text-gray-900">{safe(user.name)}</div>
+                                                        <div className="text-xs font-medium text-slate-400">{safe(user.email)}</div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -93,7 +95,7 @@ export default function Index({ auth, users, filters }) {
                                                 </span>
                                             </td>
                                             <td className="px-8 py-5 text-sm font-medium text-slate-500 uppercase tracking-tight">
-                                                {new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                {user.created_at ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
                                             </td>
                                             <td className="px-8 py-5 text-right whitespace-nowrap">
                                                 <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -139,7 +141,7 @@ export default function Index({ auth, users, filters }) {
                     </div>
 
                     {/* Pagination */}
-                    {users.links && users.links.length > 3 && (
+                    {users?.links && users.links.length > 3 && (
                         <div className="px-8 py-6 border-t border-slate-50 flex items-center justify-between">
                             <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">
                                 Showing {users.from} to {users.to} of {users.total} entries

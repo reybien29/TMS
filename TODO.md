@@ -1,11 +1,10 @@
-# Players Page Components Task Progress
+# TODO: Fix Events Index Null Date Error
 
-**Completed Steps:**
-- [x] STEP 1: Verified Create.jsx complete
-- [x] STEP 2: Verified Edit.jsx complete  
-- [x] Plan approved for STEP 3: Update Show.jsx
+## Plan Steps:
+- [x] Step 1: Edit resources/js/Pages/Events/Index.jsx - Add safeFormatTime and safeFormatDateTime functions, update all date displays
+- [x] Step 2: Skip optional backend filter (frontend fix sufficient)
+- [x] Step 3: Changes implemented and verified via file reads
+- [x] Step 4: Ready for `npm run dev`
+- [x] Step 5: Task completed - error fixed!
 
-**Teams Module Progress:** See TODO_TEAMS.md
-- [x] Implement STEP 3 edits to Show.jsx (position mapper, created_at, dark avatar, registration date)
-- [x] Test all pages
-- [x] Final completion
+

@@ -10,6 +10,8 @@ const positionLabels = {
     bench: 'Bench'
 };
 
+const safe = (str) => str?.toLowerCase() ?? '';
+
 export default function Show({ team }) {
     const getPositionLabel = (position) => {
         return positionLabels[position] || position?.replace(/_/g, ' ') || 'No Position';
@@ -19,23 +21,23 @@ export default function Show({ team }) {
 
     return (
         <DashboardLayout>
-            <Head title={`Team Profile: ${team.name}`} />
+            <Head title={`Team Profile: ${team?.name || 'Team'}`} />
 
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
                     <div className="flex items-center gap-6">
                         <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 flex items-center justify-center text-white text-2xl font-black shadow-2xl shadow-indigo-300/50 border-4 border-white/20">
-                            {team.abbreviation?.charAt(0) || team.name.charAt(0)}
+                            {team?.abbreviation?.charAt(0) || (team?.name ?? '').charAt(0)}
                         </div>
                         <div>
-                            <h1 className="text-4xl font-black text-slate-900 tracking-tight">{team.name}</h1>
+                            <h1 className="text-4xl font-black text-slate-900 tracking-tight">{team?.name}</h1>
                             <div className="flex items-center gap-3 mt-1.5 text-sm font-medium text-slate-500">
                                 <span className="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-black uppercase tracking-wider rounded-full shadow-sm">
-                                    {team.age_group ? `${team.age_group.toUpperCase()}` : 'Any Age'}
+                                    {team?.age_group ? `${team.age_group.toUpperCase()}` : 'Any Age'}
                                 </span>
                                 <span>•</span>
-                                <span>{team.division || 'Independent'}</span>
+                                <span>{team?.division || 'Independent'}</span>
                             </div>
                         </div>
                     </div>
@@ -47,7 +49,7 @@ export default function Show({ team }) {
                             ← Back to Teams
                         </Link>
                         <Link
-                            href={route('teams.edit', team.id)}
+                            href={team?.id ? route('teams.edit', team.id) : '#'}
                             className="px-6 py-2.5 text-sm font-bold text-white bg-indigo-600 rounded-xl shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:shadow-xl transition-all duration-200"
                         >
                             Edit Team
@@ -61,11 +63,11 @@ export default function Show({ team }) {
                         <div className="bg-[#0a0f1c] rounded-3xl shadow-2xl border border-slate-800/50 p-8 text-white">
                             <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-6">Team Hub</h3>
                             <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-slate-600 to-slate-700 mx-auto mb-6 flex items-center justify-center text-2xl font-black shadow-xl shadow-black/30">
-                                {team.abbreviation || team.name.slice(0, 2).toUpperCase()}
+                                {team?.abbreviation || (team?.name ?? '').slice(0, 2).toUpperCase()}
                             </div>
                             <div className="text-center">
                                 <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Coach Contact</p>
-                                <p className="text-lg font-bold">{team.coach_contact || 'TBD'}</p>
+                                <p className="text-lg font-bold">{team?.coach_contact || 'TBD'}</p>
                             </div>
                         </div>
                     </div>
@@ -83,7 +85,7 @@ export default function Show({ team }) {
                                     <p className="text-slate-400 text-xs font-bold uppercase tracking-wider">Head Coach</p>
                                 </div>
                             </div>
-                            <p className="text-2xl font-black text-slate-900">{team.coach_name || 'TBD'}</p>
+                            <p className="text-2xl font-black text-slate-900">{team?.coach_name || 'TBD'}</p>
                         </div>
 
                         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
@@ -94,7 +96,7 @@ export default function Show({ team }) {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="color:text-xs font-bold uppercase tracking-wider">Roster Size</p>
+                                    <p className="text-xs font-bold uppercase tracking-wider">Roster Size</p>
                                 </div>
                             </div>
                             <p className="text-3xl font-black text-slate-900">{playerCount}</p>
@@ -110,7 +112,7 @@ export default function Show({ team }) {
                                     <p className="text-slate-400 text-xs font-bold uppercase tracking-wider">League</p>
                                 </div>
                             </div>
-                            <p className="text-xl font-bold text-slate-900">{team.league || 'Independent'}</p>
+                            <p className="text-xl font-bold text-slate-900">{team?.league || 'Independent'}</p>
                         </div>
 
                         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all md:col-span-2 lg:col-span-1">
@@ -148,13 +150,13 @@ export default function Show({ team }) {
                                     team.players.map((player) => (
                                         <tr key={player.id} className="hover:bg-slate-50/50 transition-colors">
                                             <td className="px-8 py-4">
-                                                <Link href={route('players.show', player.id)} className="group flex items-center gap-3">
+                                        <Link href={player?.id ? route('players.show', player.id) : '#'} className="group flex items-center gap-3">
                                                     <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 text-sm font-bold border border-slate-200 group-hover:bg-indigo-50 group-hover:border-indigo-200 group-hover:text-indigo-600 transition-all">
-                                                        {player.first_name.charAt(0).toUpperCase()}
+                                                        {(player?.first_name ?? '?').charAt(0).toUpperCase()}
                                                     </div>
                                                     <div>
                                                         <div className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
-                                                            {player.first_name} {player.last_name}
+                                                            {safe(player?.first_name)} {safe(player?.last_name)}
                                                         </div>
                                                     </div>
                                                 </Link>

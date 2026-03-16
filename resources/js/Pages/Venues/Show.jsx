@@ -1,25 +1,27 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link } from '@inertiajs/react';
 
+const safe = (str) => str?.toLowerCase() ?? '';
+
 export default function Show({ venue }) {
     return (
         <DashboardLayout>
-            <Head title={`Venue: ${venue.name}`} />
+            <Head title={`Venue: ${venue?.name || 'Loading...'}`} />
 
             <div className="max-w-6xl mx-auto">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
                     <div className="flex items-center gap-6">
                         <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white text-2xl font-black shadow-xl shadow-emerald-200">
-                            {venue.name.charAt(0)}
+                            {(venue?.name ?? '').charAt(0)}
                         </div>
                         <div>
-                            <h1 className="text-4xl font-black text-slate-900 tracking-tight">{venue.name}</h1>
+                            <h1 className="text-4xl font-black text-slate-900 tracking-tight">{venue?.name}</h1>
                             <div className="flex items-center gap-3 mt-1.5">
-                                <span className={`px-2 py-0.5 ${venue.is_public ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'} text-[10px] font-black uppercase tracking-widest rounded-md border`}>
-                                    {venue.is_public ? 'Public Facility' : 'Private Facility'}
+                                <span className={`px-2 py-0.5 ${venue?.is_public ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'} text-[10px] font-black uppercase tracking-widest rounded-md border`}>
+                                    {venue?.is_public ? 'Public Facility' : 'Private Facility'}
                                 </span>
                                 <span className="text-slate-400 text-sm font-medium">•</span>
-                                <span className="text-slate-500 text-sm font-medium">{venue.city}, {venue.state || venue.country}</span>
+                                <span className="text-slate-500 text-sm font-medium">{safe(venue?.city)}, {safe(venue?.state || venue?.country)}</span>
                             </div>
                         </div>
                     </div>
@@ -31,7 +33,7 @@ export default function Show({ venue }) {
                             BACK
                         </Link>
                         <Link
-                            href={route('venues.edit', venue.id)}
+                            href={venue?.id ? route('venues.edit', venue.id) : '#'}
                             className="px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 rounded-xl shadow-sm hover:bg-emerald-500 transition-all duration-200"
                         >
                             EDIT VENUE
@@ -52,7 +54,7 @@ export default function Show({ venue }) {
                                     </div>
                                     <div>
                                         <p className="text-xs font-bold text-slate-400 mb-0.5">Capacity</p>
-                                        <p className="text-slate-900 font-black">{venue.capacity || 'Unlimited'} People</p>
+                                        <p className="text-slate-900 font-black">{venue?.capacity || 'Unlimited'} People</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-4">
@@ -61,7 +63,7 @@ export default function Show({ venue }) {
                                     </div>
                                     <div>
                                         <p className="text-xs font-bold text-slate-400 mb-0.5">Rate</p>
-                                        <p className="text-slate-900 font-black">${venue.hourly_rate}/hr</p>
+                                        <p className="text-slate-900 font-black">${venue?.hourly_rate ?? 0}/hr</p>
                                     </div>
                                 </div>
                             </div>
@@ -91,8 +93,8 @@ export default function Show({ venue }) {
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                                 </div>
                                 <div>
-                                    <p className="text-slate-900 font-black text-lg">{venue.address}</p>
-                                    <p className="text-slate-500 font-medium">{venue.city}, {venue.state} {venue.country}</p>
+                                    <p className="text-slate-900 font-black text-lg">{venue?.address}</p>
+                                    <p className="text-slate-500 font-medium">{safe(venue?.city)}, {safe(venue?.state)} {safe(venue?.country)}</p>
                                 </div>
                             </div>
                         </div>
@@ -102,12 +104,12 @@ export default function Show({ venue }) {
                                 <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Linked Events</h3>
                             </div>
                             <div className="p-8">
-                                {venue.events && venue.events.length > 0 ? (
+                                {venue?.events && venue.events.length > 0 ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {venue.events.map((event) => (
-                                            <Link key={event.id} href={route('events.show', event.id)} className="block p-4 rounded-2xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all group">
+                                            <Link key={event.id} href={event.id ? route('events.show', event.id) : '#'} className="block p-4 rounded-2xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all group">
                                                 <p className="text-xs font-black text-emerald-600 uppercase tracking-widest mb-1">{event.event_type}</p>
-                                                <p className="text-slate-900 font-bold group-hover:text-emerald-700 transition-colors uppercase">{event.name}</p>
+                                                <p className="text-slate-900 font-bold group-hover:text-emerald-700 transition-colors uppercase">{safe(event.name)}</p>
                                             </Link>
                                         ))}
                                     </div>

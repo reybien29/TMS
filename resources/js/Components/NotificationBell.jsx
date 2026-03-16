@@ -130,12 +130,12 @@ export default function NotificationBell() {
                                             <p className="text-sm font-bold text-slate-900 line-clamp-1">{notification.data?.title || 'Notification'}</p>
                                             <p className="text-xs text-slate-500 line-clamp-2 mt-1">{notification.data?.message}</p>
                                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider mt-2">
-                                                {new Date(notification.created_at).toLocaleDateString('en-US', {
+                                                {notification.created_at ? new Date(notification.created_at).toLocaleDateString('en-US', {
                                                     month: 'short',
                                                     day: 'numeric',
                                                     hour: 'numeric',
                                                     minute: '2-digit'
-                                                })}
+                                                }) : 'Just now'}
                                             </p>
                                         </div>
                                     </div>

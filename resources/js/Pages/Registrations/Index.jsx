@@ -1,8 +1,13 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
 
+const safe = (str) => str?.toLowerCase() ?? '';
+
 export default function Index({ auth, registrations }) {
     const formatDateTime = (dateString) => {
+        if (!dateString) {
+            return 'N/A';
+        }
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', {
             month: 'short',
@@ -49,18 +54,18 @@ export default function Index({ auth, registrations }) {
 
                 {/* Registrations List */}
                 <div className="grid grid-cols-1 gap-4">
-                    {registrations.data.length > 0 ? (
-                        registrations.data.map((reg) => (
+                    {(registrations?.data ?? []).length > 0 ? (
+                        (registrations?.data ?? []).map((reg) => (
                             <div key={reg.id} className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden group transition-all duration-300 hover:shadow-xl hover:shadow-slate-200/50">
                                 <div className="p-6 md:p-8 flex flex-col md:flex-row items-center gap-6">
                                     {/* Event Info */}
                                     <div className="flex-1 w-full text-center md:text-left">
                                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none mb-2">Event Enrollment</p>
                                         <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors mb-1">
-                                            {reg.event?.title?.toLowerCase() || 'basketball event'}
+                                            {safe(reg.event?.title) || 'basketball event'}
                                         </h3>
                                         <p className="text-sm font-medium text-slate-400">
-                                            Registered on {formatDateTime(reg.created_at)}
+                                            Registered on {formatDateTime(reg?.created_at)}
                                         </p>
                                     </div>
 
@@ -68,10 +73,10 @@ export default function Index({ auth, registrations }) {
                                     <div className="w-full md:w-auto px-6 py-3 bg-slate-50 rounded-2xl flex flex-col items-center md:items-start">
                                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none mb-1">Team & Player</p>
                                         <p className="text-sm font-bold text-slate-600">
-                                            {reg.player?.first_name} {reg.player?.last_name}
+                                            {reg.player?.first_name || 'Anonymous'} {reg.player?.last_name || ''}
                                         </p>
                                         <p className="text-xs font-medium text-slate-400">
-                                            {reg.team?.name?.toLowerCase() || 'no team assigned'}
+                                            {safe(reg.team?.name) || 'no team assigned'}
                                         </p>
                                     </div>
 
@@ -79,10 +84,10 @@ export default function Index({ auth, registrations }) {
                                     <div className="w-full md:w-auto text-center">
                                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none mb-2 md:hidden">Payment Status</p>
                                         <span className={`inline-flex items-center px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${getStatusStyle(reg.payment_status)}`}>
-                                            {reg.payment_status}
+                                            {reg?.payment_status}
                                         </span>
                                         <p className="text-xs font-bold text-slate-600 mt-2">
-                                            ${reg.payment_amount}
+                                            ${reg?.payment_amount ?? 0}
                                         </p>
                                     </div>
 
@@ -116,9 +121,9 @@ export default function Index({ auth, registrations }) {
                 </div>
 
                 {/* Pagination */}
-                {registrations.links && registrations.links.length > 3 && (
+                {(registrations?.links ?? []).length > 3 && (
                     <div className="mt-10 py-6 flex items-center justify-center gap-1">
-                        {registrations.links.map((link, index) => (
+                        {(registrations?.links ?? []).map((link, index) => (
                             <Link 
                                 key={index} 
                                 href={link.url}
